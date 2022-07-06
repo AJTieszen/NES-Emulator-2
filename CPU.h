@@ -50,6 +50,12 @@ private:
 	uint16_t imm() {
 		return PC + 1;
 	}
+	uint16_t ind() {
+		uint16_t addr = abs();
+		uint8_t ll = mem->read(addr);
+		uint8_t hh = mem->read(addr + 1);
+		return ll + (hh << 8);
+	}
 
 public:
 	// Singleton Class
@@ -113,9 +119,25 @@ public:
 				err_cnt++;
 			}
 		}
+		std::cout << "\n  Indirect mode: ";
+		{
+			PC = 0;
+			mem->write(1, 0xCD);
+			mem->write(2, 0xAB);
+
+			mem->write(0xABCD, 0xCE);
+			mem->write(0xABCE, 0xFA);
+			value = ind();
+			if (value == 0xFACE) std::cout << "OK";
+			else {
+				printf("Error: Expected face, got %0004x", value);
+				err_cnt++;
+			}
+		}
 
 		if (err_cnt == 0) std::cout << "\nCPU OK\n";
 		else printf("\nCPU NOT OK: %d errors found\n", err_cnt);
+		mem->clear();
 	}
 	void print() {
 		printf("Program Counter: %0004x | Accumulator: %02x | X: %02x | Y: %02x | Flags: %02x | Stack Pointer: %02x\n", PC, ACC, X, Y, SF, SP);

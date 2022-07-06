@@ -21,6 +21,8 @@ public:
 
 	// Emulator Utilities
 	void test() {
+		std::cout << "\nTesting Memory Map:";
+
 		int err_cnt = 0;
 		int value;
 		for (int i = 0; i <= 0xFFFF; i++) {

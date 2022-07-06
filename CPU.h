@@ -1,9 +1,14 @@
 #pragma once
 
+#include "MemMap.h"
+
 class CPU {
 	// Singleton Class
 	static CPU* instance;
 	CPU() {}
+
+	// Memory Access
+	MemMap* mem = mem->getInstance();
 
 private:
 	// Internal Registers
@@ -26,6 +31,13 @@ private:
 		return (SF & 1 << id) != 0;
 	}
 
+	// Address Modes
+	uint16_t abs() {
+		uint8_t ll = mem->read(PC + 1);
+		uint8_t hh = mem->read(PC + 2);
+		return ll + (hh << 8);
+	}
+
 public:
 	// Singleton Class
 	static CPU* getInstance() {
@@ -35,6 +47,17 @@ public:
 
 	// Emulator Utilities
 	void test() {
+		std::cout << "Testinc CPU";
+		int value;
+
+		std::cout << "\n  Absolute: ";
+		PC = 0;
+		mem->write(1, 0xCD);
+		mem->write(2, 0xAB);
+		value = abs();
+		if (value == 0xABCD) std::cout << "OK";
+		else printf("Error: Expected abcd, got %0004x", value);
+
 		std::cout << "\nCPU OK\n";
 	}
 	void print() {

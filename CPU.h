@@ -62,6 +62,12 @@ private:
 		uint8_t hh = mem->read(addr + 1);
 		return ll + (hh << 8);
 	}
+	uint16_t ind_y() {
+		uint16_t addr = mem->read(PC + 1) + Y;
+		uint8_t ll = mem->read(addr);
+		uint8_t hh = mem->read(addr + 1);
+		return ll + (hh << 8);
+	}
 
 public:
 	// Singleton Class
@@ -153,6 +159,21 @@ public:
 			if (value == 0xFADE) std::cout << "OK";
 			else {
 				printf("Error: Expected fade, got %0004x", value);
+				err_cnt++;
+			}
+		}
+		std::cout << "\n  Indirect, Y mode: ";
+		{
+			PC = 0;
+			mem->write(1, 0xCD);
+			Y = 0xFE;
+
+			mem->write(0x1CB, 0xED);
+			mem->write(0x1CC, 0xAC);
+			value = ind_y();
+			if (value == 0xACED) std::cout << "OK";
+			else {
+				printf("Error: Expected aced, got %0004x", value);
 				err_cnt++;
 			}
 		}

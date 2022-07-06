@@ -47,6 +47,9 @@ private:
 		uint8_t hh = mem->read(PC + 2);
 		return ll + (hh << 8) + Y;
 	}
+	uint16_t imm() {
+		return PC + 1;
+	}
 
 public:
 	// Singleton Class
@@ -62,7 +65,7 @@ public:
 		int err_cnt = 0;
 		int value;
 
-		std::cout << "\n  Absolute: ";
+		std::cout << "\n  Absolute mode: ";
 		{
 			PC = 0;
 			mem->write(1, 0xCD);
@@ -74,7 +77,7 @@ public:
 				err_cnt++;
 			}
 		}
-		std::cout << "\n  Absolute, X Indexed: ";
+		std::cout << "\n  Absolute, X Indexed mode: ";
 		{
 			PC = 0;
 			X = 0xEF;
@@ -87,7 +90,7 @@ public:
 				err_cnt++;
 			}
 		}
-		std::cout << "\n  Absolute, Y Indexed: ";
+		std::cout << "\n  Absolute, Y Indexed mode: ";
 		{
 			PC = 0;
 			Y = 0xFE;
@@ -97,6 +100,16 @@ public:
 			if (value == 0xACCB) std::cout << "OK";
 			else {
 				printf("Error: Expected accb, got %0004x", value);
+				err_cnt++;
+			}
+		}
+		std::cout << "\n  Immediate mode: ";
+		{
+			PC = 0;
+			value = imm();
+			if (value == 1) std::cout << "OK";
+			else {
+				printf("Error: Expected 0001, got %0004x", value);
 				err_cnt++;
 			}
 		}

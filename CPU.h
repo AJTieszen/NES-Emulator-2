@@ -68,6 +68,10 @@ private:
 		uint8_t hh = mem->read(addr + 1);
 		return ll + (hh << 8);
 	}
+	uint16_t rel() {
+		int8_t offset = mem->read(PC + 1);
+		return PC + offset;
+	}
 
 public:
 	// Singleton Class
@@ -174,6 +178,18 @@ public:
 			if (value == 0xACED) std::cout << "OK";
 			else {
 				printf("Error: Expected aced, got %0004x", value);
+				err_cnt++;
+			}
+		}
+		std::cout << "\n  Relative mode: ";
+		{
+			PC = 0;
+			mem->write(1, 0xCD);
+
+			value = rel();
+			if (value == 0xFFCD) std::cout << "OK";
+			else {
+				printf("Error: Expected ffed, got %0004x", value);
 				err_cnt++;
 			}
 		}

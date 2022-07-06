@@ -56,6 +56,12 @@ private:
 		uint8_t hh = mem->read(addr + 1);
 		return ll + (hh << 8);
 	}
+	uint16_t x_ind() {
+		uint8_t addr = mem->read(PC + 1) + X;
+		uint8_t ll = mem->read(addr);
+		uint8_t hh = mem->read(addr + 1);
+		return ll + (hh << 8);
+	}
 
 public:
 	// Singleton Class
@@ -131,6 +137,22 @@ public:
 			if (value == 0xFACE) std::cout << "OK";
 			else {
 				printf("Error: Expected face, got %0004x", value);
+				err_cnt++;
+			}
+		}
+		std::cout << "\n  X, Indirect mode: ";
+		{
+			PC = 0;
+			mem->write(1, 0xCD);
+			X = 0xAB;
+
+			mem->write(0x78, 0xDE);
+			mem->write(0x79, 0xFA);
+
+			value = x_ind();
+			if (value == 0xFADE) std::cout << "OK";
+			else {
+				printf("Error: Expected fade, got %0004x", value);
 				err_cnt++;
 			}
 		}

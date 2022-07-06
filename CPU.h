@@ -42,6 +42,11 @@ private:
 		uint8_t hh = mem->read(PC + 2);
 		return ll + (hh << 8) + X;
 	}
+	uint16_t abs_y() {
+		uint8_t ll = mem->read(PC + 1);
+		uint8_t hh = mem->read(PC + 2);
+		return ll + (hh << 8) + Y;
+	}
 
 public:
 	// Singleton Class
@@ -69,7 +74,6 @@ public:
 				err_cnt++;
 			}
 		}
-
 		std::cout << "\n  Absolute, X Indexed: ";
 		{
 			PC = 0;
@@ -80,6 +84,19 @@ public:
 			if (value == 0xACBC) std::cout << "OK";
 			else {
 				printf("Error: Expected acbc, got %0004x", value);
+				err_cnt++;
+			}
+		}
+		std::cout << "\n  Absolute, Y Indexed: ";
+		{
+			PC = 0;
+			Y = 0xFE;
+			mem->write(1, 0xCD);
+			mem->write(2, 0xAB);
+			value = abs_y();
+			if (value == 0xACCB) std::cout << "OK";
+			else {
+				printf("Error: Expected accb, got %0004x", value);
 				err_cnt++;
 			}
 		}

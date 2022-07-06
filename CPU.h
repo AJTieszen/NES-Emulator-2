@@ -78,6 +78,9 @@ private:
 	uint8_t zpg_x() {
 		return mem->read(PC + 1) + X;
 	}
+	uint8_t zpg_y() {
+		return mem->read(PC + 1) + Y;
+	}
 
 public:
 	// Singleton Class
@@ -221,6 +224,19 @@ public:
 			if (value == 0x0078) std::cout << "OK";
 			else {
 				printf("Error: Expected 0078, got %0004x", value);
+				err_cnt++;
+			}
+		}
+		std::cout << "\n  Zero Page, Y mode: ";
+		{
+			PC = 0;
+			mem->write(1, 0xCD);
+			Y = 0xFE;
+
+			value = zpg_y();
+			if (value == 0x00CB) std::cout << "OK";
+			else {
+				printf("Error: Expected 00cb, got %0004x", value);
 				err_cnt++;
 			}
 		}

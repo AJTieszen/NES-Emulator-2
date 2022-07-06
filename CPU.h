@@ -72,8 +72,11 @@ private:
 		int8_t offset = mem->read(PC + 1);
 		return PC + offset;
 	}
-	uint16_t zpg() {
+	uint8_t zpg() {
 		return mem->read(PC + 1);
+	}
+	uint8_t zpg_x() {
+		return mem->read(PC + 1) + X;
 	}
 
 public:
@@ -205,6 +208,19 @@ public:
 			if (value == 0x00CD) std::cout << "OK";
 			else {
 				printf("Error: Expected 00cd, got %0004x", value);
+				err_cnt++;
+			}
+		}
+		std::cout << "\n  Zero Page, X mode: ";
+		{
+			PC = 0;
+			mem->write(1, 0xCD);
+			X = 0xAB;
+
+			value = zpg_x();
+			if (value == 0x0078) std::cout << "OK";
+			else {
+				printf("Error: Expected 0078, got %0004x", value);
 				err_cnt++;
 			}
 		}

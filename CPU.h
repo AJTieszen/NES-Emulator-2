@@ -19,6 +19,10 @@ private:
 	uint8_t SF = 0;		// Status Flags
 	uint8_t SP = 0;		// Stack Pointer
 
+	// CPU Status
+	unsigned int cycle = 0;
+	bool extraCycle = false;
+
 	// Helper Functions
 	void setFlag(int id) {
 		SF = SF | 1 << id;
@@ -96,11 +100,21 @@ public:
 		int err_cnt = 0;
 		int value;
 
+
+		PC = 0;
+		X = 0xEF;
+		Y = 0xFE;
+		mem->write(1, 0xCD);
+		mem->write(2, 0xAB);
+		mem->write(0xABCD, 0xCE);
+		mem->write(0xABCE, 0xFA);
+		mem->write(0x78, 0xDE);
+		mem->write(0x79, 0xFA);
+		mem->write(0x1CB, 0xED);
+		mem->write(0x1CC, 0xAC);
+
 		std::cout << "\n  Absolute mode: ";
 		{
-			PC = 0;
-			mem->write(1, 0xCD);
-			mem->write(2, 0xAB);
 			value = abs();
 			if (value == 0xABCD) std::cout << "OK";
 			else {
@@ -110,10 +124,6 @@ public:
 		}
 		std::cout << "\n  Absolute, X Indexed mode: ";
 		{
-			PC = 0;
-			X = 0xEF;
-			mem->write(1, 0xCD);
-			mem->write(2, 0xAB);
 			value = abs_x();
 			if (value == 0xACBC) std::cout << "OK";
 			else {
@@ -123,10 +133,6 @@ public:
 		}
 		std::cout << "\n  Absolute, Y Indexed mode: ";
 		{
-			PC = 0;
-			Y = 0xFE;
-			mem->write(1, 0xCD);
-			mem->write(2, 0xAB);
 			value = abs_y();
 			if (value == 0xACCB) std::cout << "OK";
 			else {
@@ -136,7 +142,6 @@ public:
 		}
 		std::cout << "\n  Immediate mode: ";
 		{
-			PC = 0;
 			value = imm();
 			if (value == 1) std::cout << "OK";
 			else {
@@ -146,12 +151,6 @@ public:
 		}
 		std::cout << "\n  Indirect mode: ";
 		{
-			PC = 0;
-			mem->write(1, 0xCD);
-			mem->write(2, 0xAB);
-
-			mem->write(0xABCD, 0xCE);
-			mem->write(0xABCE, 0xFA);
 			value = ind();
 			if (value == 0xFACE) std::cout << "OK";
 			else {
@@ -161,12 +160,7 @@ public:
 		}
 		std::cout << "\n  X, Indirect mode: ";
 		{
-			PC = 0;
-			mem->write(1, 0xCD);
 			X = 0xAB;
-
-			mem->write(0x78, 0xDE);
-			mem->write(0x79, 0xFA);
 
 			value = x_ind();
 			if (value == 0xFADE) std::cout << "OK";
@@ -177,12 +171,6 @@ public:
 		}
 		std::cout << "\n  Indirect, Y mode: ";
 		{
-			PC = 0;
-			mem->write(1, 0xCD);
-			Y = 0xFE;
-
-			mem->write(0x1CB, 0xED);
-			mem->write(0x1CC, 0xAC);
 			value = ind_y();
 			if (value == 0xACED) std::cout << "OK";
 			else {
@@ -192,9 +180,6 @@ public:
 		}
 		std::cout << "\n  Relative mode: ";
 		{
-			PC = 0;
-			mem->write(1, 0xCD);
-
 			value = rel();
 			if (value == 0xFFCD) std::cout << "OK";
 			else {
@@ -204,9 +189,6 @@ public:
 		}
 		std::cout << "\n  Zero Page mode: ";
 		{
-			PC = 0;
-			mem->write(1, 0xCD);
-
 			value = zpg();
 			if (value == 0x00CD) std::cout << "OK";
 			else {
@@ -216,10 +198,6 @@ public:
 		}
 		std::cout << "\n  Zero Page, X mode: ";
 		{
-			PC = 0;
-			mem->write(1, 0xCD);
-			X = 0xAB;
-
 			value = zpg_x();
 			if (value == 0x0078) std::cout << "OK";
 			else {
@@ -229,10 +207,6 @@ public:
 		}
 		std::cout << "\n  Zero Page, Y mode: ";
 		{
-			PC = 0;
-			mem->write(1, 0xCD);
-			Y = 0xFE;
-
 			value = zpg_y();
 			if (value == 0x00CB) std::cout << "OK";
 			else {

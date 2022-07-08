@@ -21,7 +21,7 @@ private:
 
 	// CPU Status
 	unsigned int cycle = 0;
-	bool extraCycle = false;
+	bool extra_cycle = false;
 
 	// Helper Functions
 	void setFlag(int id) {
@@ -34,24 +34,34 @@ private:
 	bool readFlag(int id) {
 		return (SF & 1 << id) != 0;
 	}
+	bool incrementPC(int PC_inc) {
+		extra_cycle = false;
+		if (PC >> 8 != (PC + PC_inc) >> 8) extra_cycle = true;
+		PC += PC_inc;
+		return extra_cycle;
+	}
 
 	// Address Modes
 	uint16_t abs() {
 		uint8_t ll = mem->read(PC + 1);
 		uint8_t hh = mem->read(PC + 2);
+		incrementPC(3);
 		return ll + (hh << 8);
 	}
 	uint16_t abs_x() {
 		uint8_t ll = mem->read(PC + 1);
 		uint8_t hh = mem->read(PC + 2);
+		incrementPC(3);
 		return ll + (hh << 8) + X;
 	}
 	uint16_t abs_y() {
 		uint8_t ll = mem->read(PC + 1);
 		uint8_t hh = mem->read(PC + 2);
+		incrementPC(3);
 		return ll + (hh << 8) + Y;
 	}
 	uint16_t imm() {
+		incrementPC(2);
 		return PC + 1;
 	}
 	uint16_t ind() {
@@ -64,12 +74,14 @@ private:
 		uint8_t addr = mem->read(PC + 1) + X;
 		uint8_t ll = mem->read(addr);
 		uint8_t hh = mem->read(addr + 1);
+		incrementPC(2);
 		return ll + (hh << 8);
 	}
 	uint16_t ind_y() {
 		uint16_t addr = mem->read(PC + 1) + Y;
 		uint8_t ll = mem->read(addr);
 		uint8_t hh = mem->read(addr + 1);
+		incrementPC(2);
 		return ll + (hh << 8);
 	}
 	uint16_t rel() {
@@ -77,12 +89,15 @@ private:
 		return PC + offset;
 	}
 	uint8_t zpg() {
+		incrementPC(2);
 		return mem->read(PC + 1);
 	}
 	uint8_t zpg_x() {
+		incrementPC(2);
 		return mem->read(PC + 1) + X;
 	}
 	uint8_t zpg_y() {
+		incrementPC(2);
 		return mem->read(PC + 1) + Y;
 	}
 
@@ -99,7 +114,6 @@ public:
 
 		int err_cnt = 0;
 		int value;
-
 
 		PC = 0;
 		X = 0xEF;
@@ -122,6 +136,7 @@ public:
 				err_cnt++;
 			}
 		}
+		printStatus();
 		std::cout << "\n  Absolute, X Indexed mode: ";
 		{
 			value = abs_x();
@@ -131,6 +146,7 @@ public:
 				err_cnt++;
 			}
 		}
+		printStatus();
 		std::cout << "\n  Absolute, Y Indexed mode: ";
 		{
 			value = abs_y();
@@ -140,6 +156,7 @@ public:
 				err_cnt++;
 			}
 		}
+		printStatus();
 		std::cout << "\n  Immediate mode: ";
 		{
 			value = imm();
@@ -149,6 +166,7 @@ public:
 				err_cnt++;
 			}
 		}
+		printStatus();
 		std::cout << "\n  Indirect mode: ";
 		{
 			value = ind();
@@ -158,6 +176,7 @@ public:
 				err_cnt++;
 			}
 		}
+		printStatus();
 		std::cout << "\n  X, Indirect mode: ";
 		{
 			X = 0xAB;
@@ -169,6 +188,7 @@ public:
 				err_cnt++;
 			}
 		}
+		printStatus();
 		std::cout << "\n  Indirect, Y mode: ";
 		{
 			value = ind_y();
@@ -178,6 +198,7 @@ public:
 				err_cnt++;
 			}
 		}
+		printStatus();
 		std::cout << "\n  Relative mode: ";
 		{
 			value = rel();
@@ -187,6 +208,7 @@ public:
 				err_cnt++;
 			}
 		}
+		printStatus();
 		std::cout << "\n  Zero Page mode: ";
 		{
 			value = zpg();
@@ -196,6 +218,7 @@ public:
 				err_cnt++;
 			}
 		}
+		printStatus();
 		std::cout << "\n  Zero Page, X mode: ";
 		{
 			value = zpg_x();
@@ -205,6 +228,7 @@ public:
 				err_cnt++;
 			}
 		}
+		printStatus();
 		std::cout << "\n  Zero Page, Y mode: ";
 		{
 			value = zpg_y();
@@ -214,13 +238,26 @@ public:
 				err_cnt++;
 			}
 		}
+		printStatus();
+
+		std::cout << "\n  Extra Cycle Detection (No Page Boundary): ";
+		{
+			PC = 0;
+			std::cout << incrementPC(3);
+		}
+
+		std::cout << "\n  Extra Cycle Detection (Page Boundary): ";
+		{
+			PC = 0xFE;
+			std::cout << incrementPC(3);
+		}
 
 		if (err_cnt == 0) std::cout << "\nCPU OK\n";
 		else printf("\nCPU NOT OK: %d errors found\n", err_cnt);
 		mem->clear();
 	}
-	void print() {
-		printf("Program Counter: %0004x | Accumulator: %02x | X: %02x | Y: %02x | Flags: %02x | Stack Pointer: %02x\n", PC, ACC, X, Y, SF, SP);
+	void printStatus() {
+		printf("\nProgram Counter: %0004x | Accumulator: %02x | X: %02x | Y: %02x | Flags: %02x | Stack Pointer: %02x\n", PC, ACC, X, Y, SF, SP);
 	}
 
 };

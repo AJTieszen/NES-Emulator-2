@@ -18,5 +18,5 @@ int main()
     // Test Modules
     mem->test();
     cpu->test();
-    cpu->printStatus();
+    cpu->print();
 }

@@ -39,20 +39,25 @@ private:
 	uint16_t abs() {
 		uint8_t ll = mem->read(PC + 1);
 		uint8_t hh = mem->read(PC + 2);
+		PC += 3;
 		return ll + (hh << 8);
 	}
 	uint16_t abs_x() {
 		uint8_t ll = mem->read(PC + 1);
 		uint8_t hh = mem->read(PC + 2);
+		PC += 3;
 		return ll + (hh << 8) + X;
 	}
 	uint16_t abs_y() {
 		uint8_t ll = mem->read(PC + 1);
 		uint8_t hh = mem->read(PC + 2);
+		PC += 3;
 		return ll + (hh << 8) + Y;
 	}
 	uint16_t imm() {
-		return PC + 1;
+		uint16_t addr = PC + 1;
+		PC += 2;
+		return addr;
 	}
 	uint16_t ind() {
 		uint16_t addr = abs();
@@ -64,12 +69,14 @@ private:
 		uint8_t addr = mem->read(PC + 1) + X;
 		uint8_t ll = mem->read(addr);
 		uint8_t hh = mem->read(addr + 1);
+		PC += 2;
 		return ll + (hh << 8);
 	}
 	uint16_t ind_y() {
 		uint16_t addr = mem->read(PC + 1) + Y;
 		uint8_t ll = mem->read(addr);
 		uint8_t hh = mem->read(addr + 1);
+		PC += 2;
 		return ll + (hh << 8);
 	}
 	uint16_t rel() {
@@ -77,13 +84,19 @@ private:
 		return PC + offset;
 	}
 	uint8_t zpg() {
-		return mem->read(PC + 1);
+		uint8_t addr = mem->read(PC + 1);
+		PC += 2;
+		return addr;
 	}
 	uint8_t zpg_x() {
-		return mem->read(PC + 1) + X;
+		uint8_t addr = mem->read(PC + 1) + X;
+		PC += 2;
+		return addr;
 	}
 	uint8_t zpg_y() {
-		return mem->read(PC + 1) + Y;
+		uint8_t addr = mem->read(PC + 1) + Y;
+		PC += 2;
+		return addr;
 	}
 
 public:
@@ -113,8 +126,7 @@ public:
 		mem->write(0x1CB, 0xED);
 		mem->write(0x1CC, 0xAC);
 
-		std::cout << "\n  Absolute mode: ";
-		{
+		std::cout << "\n  Absolute mode: ";{
 			value = abs();
 			if (value == 0xABCD) std::cout << "OK";
 			else {
@@ -122,8 +134,8 @@ public:
 				err_cnt++;
 			}
 		}
-		std::cout << "\n  Absolute, X Indexed mode: ";
-		{
+		PC = 0;
+		std::cout << "\n  Absolute, X Indexed mode: ";{
 			value = abs_x();
 			if (value == 0xACBC) std::cout << "OK";
 			else {
@@ -131,8 +143,8 @@ public:
 				err_cnt++;
 			}
 		}
-		std::cout << "\n  Absolute, Y Indexed mode: ";
-		{
+		PC = 0;
+		std::cout << "\n  Absolute, Y Indexed mode: ";{
 			value = abs_y();
 			if (value == 0xACCB) std::cout << "OK";
 			else {
@@ -140,8 +152,8 @@ public:
 				err_cnt++;
 			}
 		}
-		std::cout << "\n  Immediate mode: ";
-		{
+		PC = 0;
+		std::cout << "\n  Immediate mode: ";{
 			value = imm();
 			if (value == 1) std::cout << "OK";
 			else {
@@ -149,8 +161,8 @@ public:
 				err_cnt++;
 			}
 		}
-		std::cout << "\n  Indirect mode: ";
-		{
+		PC = 0;
+		std::cout << "\n  Indirect mode: ";{
 			value = ind();
 			if (value == 0xFACE) std::cout << "OK";
 			else {
@@ -158,8 +170,8 @@ public:
 				err_cnt++;
 			}
 		}
-		std::cout << "\n  X, Indirect mode: ";
-		{
+		PC = 0;
+		std::cout << "\n  X, Indirect mode: ";{
 			X = 0xAB;
 
 			value = x_ind();
@@ -169,8 +181,8 @@ public:
 				err_cnt++;
 			}
 		}
-		std::cout << "\n  Indirect, Y mode: ";
-		{
+		PC = 0;
+		std::cout << "\n  Indirect, Y mode: ";{
 			value = ind_y();
 			if (value == 0xACED) std::cout << "OK";
 			else {
@@ -178,8 +190,8 @@ public:
 				err_cnt++;
 			}
 		}
-		std::cout << "\n  Relative mode: ";
-		{
+		PC = 0;
+		std::cout << "\n  Relative mode: ";{
 			value = rel();
 			if (value == 0xFFCD) std::cout << "OK";
 			else {
@@ -187,8 +199,8 @@ public:
 				err_cnt++;
 			}
 		}
-		std::cout << "\n  Zero Page mode: ";
-		{
+		PC = 0;
+		std::cout << "\n  Zero Page mode: ";{
 			value = zpg();
 			if (value == 0x00CD) std::cout << "OK";
 			else {
@@ -196,8 +208,8 @@ public:
 				err_cnt++;
 			}
 		}
-		std::cout << "\n  Zero Page, X mode: ";
-		{
+		PC = 0;
+		std::cout << "\n  Zero Page, X mode: ";{
 			value = zpg_x();
 			if (value == 0x0078) std::cout << "OK";
 			else {
@@ -205,8 +217,8 @@ public:
 				err_cnt++;
 			}
 		}
-		std::cout << "\n  Zero Page, Y mode: ";
-		{
+		PC = 0;
+		std::cout << "\n  Zero Page, Y mode: ";{
 			value = zpg_y();
 			if (value == 0x00CB) std::cout << "OK";
 			else {
@@ -214,13 +226,14 @@ public:
 				err_cnt++;
 			}
 		}
+		PC = 0;
 
 		if (err_cnt == 0) std::cout << "\nCPU OK\n";
 		else printf("\nCPU NOT OK: %d errors found\n", err_cnt);
 		mem->clear();
 	}
 	void print() {
-		printf("Program Counter: %0004x | Accumulator: %02x | X: %02x | Y: %02x | Flags: %02x | Stack Pointer: %02x\n", PC, ACC, X, Y, SF, SP);
+		printf("\nProgram Counter: %0004x | Accumulator: %02x | X: %02x | Y: %02x | Flags: %02x | Stack Pointer: %02x", PC, ACC, X, Y, SF, SP);
 	}
 
 };

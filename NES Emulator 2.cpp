@@ -18,5 +18,18 @@ int main()
     // Test Modules
     mem->test();
     cpu->test();
+
+    // Test CPU Instructions
+    cpu->zeroPC();
+    mem->write(1, 0xac);
+    cpu->LDA(4);
+    cpu->print();
+
+    cpu->zeroPC();
+    cpu->LDX(4);
+    cpu->print();
+
+    cpu->zeroPC();
+    cpu->LDY(4);
     cpu->print();
 }

@@ -268,5 +268,21 @@ public:
 	void print() {
 		printf("\nProgram Counter: %0004x | Accumulator: %02x | X: %02x | Y: %02x | Flags: %02x | Stack Pointer: %02x", PC, ACC, X, Y, SF, SP);
 	}
+	void zeroPC() {
+		PC = 0;
+	}
 
+	// Transfer Instructions
+	void LDA(uint8_t mode) {
+		uint8_t value = readMem(mode);
+		ACC = value;
+	}
+	void LDX(uint8_t mode) {
+		uint8_t value = readMem(mode);
+		X = value;
+	}
+	void LDY(uint8_t mode) {
+		uint8_t value = readMem(mode);
+		Y = value;
+	}
 };

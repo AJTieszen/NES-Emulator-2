@@ -297,4 +297,22 @@ public:
 		uint8_t value = Y;
 		writeMem(mode, value);
 	}
+	void TAX() {
+		X = ACC;
+	}
+	void TAY() {
+		Y = ACC;
+	}
+	void TSX() {
+		X = SP;
+	}
+	void TXA() {
+		ACC = X;
+	}
+	void TXS() {
+		SP = X;
+	}
+	void TYA() {
+		ACC = Y;
+	}
 };

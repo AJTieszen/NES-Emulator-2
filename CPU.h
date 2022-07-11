@@ -328,4 +328,14 @@ public:
 		mem->write(addr, SF);
 		SP--;
 	}
+	void PLA() {
+		SP++;
+		uint16_t addr = SP + 0x100;
+		ACC = mem->read(addr);
+	}
+	void PLA() {
+		SP++;
+		uint16_t addr = SP + 0x100;
+		SF = mem->read(addr);
+	}
 };

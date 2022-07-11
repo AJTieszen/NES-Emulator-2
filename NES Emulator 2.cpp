@@ -31,4 +31,8 @@ int main()
     cpu->PHP();
     printf("\n  %02x", mem->read(0x1ff));
     cpu->print();
+    cpu->PLA();
+    cpu->print();
+    cpu->PLA();
+    cpu->print();
 }

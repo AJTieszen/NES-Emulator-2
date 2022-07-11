@@ -272,6 +272,7 @@ public:
 		PC = 0;
 	}
 
+// CPU Instructions
 	// Transfer Instructions
 	void LDA(uint8_t mode) {
 		uint8_t value = readMem(mode);
@@ -333,9 +334,37 @@ public:
 		uint16_t addr = SP + 0x100;
 		ACC = mem->read(addr);
 	}
-	void PLA() {
+	void PLP() {
 		SP++;
 		uint16_t addr = SP + 0x100;
 		SF = mem->read(addr);
+	}
+
+	// Increments and Decrements
+	void DEC(uint8_t mode) {
+		uint16_t oldPC = PC;
+		uint8_t value = readMem(mode);
+		value--;
+		PC = oldPC;
+		writeMem(mode, value);
+	}
+	void DEX() {
+		X--;
+	}
+	void DEY() {
+		Y--;
+	}
+	void INC(uint8_t mode) {
+		uint16_t oldPC = PC;
+		uint8_t value = readMem(mode);
+		value++;
+		PC = oldPC;
+		writeMem(mode, value);
+	}
+	void INX() {
+		X++;
+	}
+	void INY() {
+		Y++;
 	}
 };

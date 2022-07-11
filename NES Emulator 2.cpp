@@ -22,17 +22,7 @@ int main()
     // Test CPU Instructions
     cpu->zeroPC();
     mem->write(1, 0xac);
-    cpu->LDA(4);
-    cpu->print();
-
-    cpu->PHP();
-    printf("\n  %02x", mem->read(0x100));
-    cpu->print();
-    cpu->PHP();
-    printf("\n  %02x", mem->read(0x1ff));
-    cpu->print();
-    cpu->PLA();
-    cpu->print();
-    cpu->PLA();
-    cpu->print();
+    mem->write(0xac, 0xff);
+    cpu->DEC(1);
+    printf("\n  %02x", mem->read(0xac));
 }

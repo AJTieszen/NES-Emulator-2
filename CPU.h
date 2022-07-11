@@ -386,4 +386,18 @@ public:
 
 		if (value < 0) clearFlag(0);
 	}
+
+	// Logical Operations
+	void AND(uint8_t mode) {
+		uint8_t value = ACC & readMem(mode);
+		ACC = value;
+	}
+	void EOR(uint8_t mode) {
+		uint8_t value = ACC ^ readMem(mode);
+		ACC = value;
+	}
+	void ORA(uint8_t mode) {
+		uint8_t value = ACC | readMem(mode);
+		ACC = value;
+	}
 };

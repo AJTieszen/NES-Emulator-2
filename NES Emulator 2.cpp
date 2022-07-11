@@ -22,12 +22,10 @@ int main()
     // Test CPU Instructions
     cpu->zeroPC();
     mem->write(1, 0xac);
-    cpu->SBC(4);
+    cpu->LDA(4);
     cpu->print();
     cpu->zeroPC();
-    cpu->SBC(4);
-    cpu->print();
-    cpu->zeroPC();
-    cpu->SBC(4);
+    mem->write(1, 0x0f);
+    cpu->ORA(4);
     cpu->print();
 }

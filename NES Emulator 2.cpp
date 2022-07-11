@@ -25,17 +25,10 @@ int main()
     cpu->LDA(4);
     cpu->print();
 
-    cpu->zeroPC();
-    cpu->LDX(4);
+    cpu->PHP();
+    printf("\n  %02x", mem->read(0x100));
     cpu->print();
-
-    cpu->zeroPC();
-    cpu->LDY(4);
+    cpu->PHP();
+    printf("\n  %02x", mem->read(0x1ff));
     cpu->print();
-
-    cpu->zeroPC();
-    mem->write(1, 0xcd);
-    mem->write(2, 0xab);
-    cpu->STY(1);
-    printf("\n  %02x", mem->read(0xabcd));
 }

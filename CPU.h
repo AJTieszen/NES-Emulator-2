@@ -315,4 +315,17 @@ public:
 	void TYA() {
 		ACC = Y;
 	}
+
+	// Stack Instructions
+	void PHA() {
+		uint16_t addr = SP + 0x100;
+		mem->write(addr, ACC);
+		SP--;
+	}
+	void PHP() {
+		uint16_t addr = SP + 0x100;
+		setFlag(4);
+		mem->write(addr, SF);
+		SP--;
+	}
 };

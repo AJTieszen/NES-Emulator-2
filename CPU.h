@@ -367,4 +367,23 @@ public:
 	void INY() {
 		Y++;
 	}
+
+	// Arithmetic Operations
+	void ADC(uint8_t mode) {
+		int value = ACC + readMem(mode) + readFlag(0);
+		ACC = value;
+
+		// Set Affected Flags
+		SF = SF & 0b00111100;
+		if (value > 0xFF) setFlag(0); // Carry
+		if (value > 0x7F) setFlag(6); // Overflow
+		if (value == 0) setFlag(1);   // Zero
+		if (value & 0x80) setFlag(7); // Negative
+	}
+	void SBC(uint8_t mode) {
+		int value = ACC - readMem(mode) - !readFlag(0);
+		ACC = value;
+
+		if (value < 0) clearFlag(0);
+	}
 };

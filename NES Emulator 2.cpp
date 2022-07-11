@@ -22,7 +22,12 @@ int main()
     // Test CPU Instructions
     cpu->zeroPC();
     mem->write(1, 0xac);
-    mem->write(0xac, 0xff);
-    cpu->DEC(1);
-    printf("\n  %02x", mem->read(0xac));
+    cpu->SBC(4);
+    cpu->print();
+    cpu->zeroPC();
+    cpu->SBC(4);
+    cpu->print();
+    cpu->zeroPC();
+    cpu->SBC(4);
+    cpu->print();
 }

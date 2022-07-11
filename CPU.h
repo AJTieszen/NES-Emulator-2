@@ -121,7 +121,7 @@ private:
 		case 1: addr = abs(); break;
 		case 2: addr = abs_x(); break;
 		case 3: addr = abs_y(); break;
-		case 4: addr = imm(); break;
+		// case 4: addr = imm(); break;
 		case 5: addr = ind(); break;
 		case 6: addr = x_ind(); break;
 		case 7: addr = ind_y(); break;
@@ -284,5 +284,17 @@ public:
 	void LDY(uint8_t mode) {
 		uint8_t value = readMem(mode);
 		Y = value;
+	}
+	void STA(uint8_t mode) {
+		uint8_t value = ACC;
+		writeMem(mode, value);
+	}
+	void STX(uint8_t mode) {
+		uint8_t value = X;
+		writeMem(mode, value);
+	}
+	void STY(uint8_t mode) {
+		uint8_t value = Y;
+		writeMem(mode, value);
 	}
 };

@@ -99,6 +99,39 @@ private:
 		return addr;
 	}
 
+	uint8_t readMem(uint8_t mode) {
+		uint16_t addr;
+		switch (mode) {
+		case 1: addr = abs(); break;
+		case 2: addr = abs_x(); break;
+		case 3: addr = abs_y(); break;
+		case 4: addr = imm(); break;
+		case 5: addr = ind(); break;
+		case 6: addr = x_ind(); break;
+		case 7: addr = ind_y(); break;
+		case 8: addr = zpg(); break;
+		case 9: addr = zpg_x(); break;
+		case 10: addr = zpg_y(); break;
+		}
+		return mem->read(addr);
+	}
+	void writeMem(uint8_t mode, uint8_t value) {
+		uint16_t addr;
+		switch (mode) {
+		case 1: addr = abs(); break;
+		case 2: addr = abs_x(); break;
+		case 3: addr = abs_y(); break;
+		case 4: addr = imm(); break;
+		case 5: addr = ind(); break;
+		case 6: addr = x_ind(); break;
+		case 7: addr = ind_y(); break;
+		case 8: addr = zpg(); break;
+		case 9: addr = zpg_x(); break;
+		case 10: addr = zpg_y(); break;
+		}
+		mem->write(addr, value);
+	}
+
 public:
 	// Singleton Class
 	static CPU* getInstance() {

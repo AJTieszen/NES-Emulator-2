@@ -276,7 +276,7 @@ public:
 
 // CPU Instructions
 	enum mode {
-		abs = 1, abs_x, abs_y, imm, ind, x_ind, ind_y, zpg, zpg_x, zpg_y
+		absM = 1, abs_xM, abs_yM, immM, indM, x_indM, ind_yM, zpgM, zpg_xM, zpg_yM
 	};
 
 	// Transfer Instructions

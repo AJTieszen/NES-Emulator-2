@@ -22,19 +22,7 @@ int main()
     // Test CPU Instructions
     cpu->zeroPC();
     mem->write(1, 120);
-    cpu->LDA(4);
-    cpu->print();
-    cpu->zeroPC();
-    cpu->ROR();
-    cpu->print();
-    cpu->zeroPC();
-    cpu->ROR();
-    cpu->print();
-    cpu->zeroPC();
-    cpu->ROR();
-    cpu->print();
-    cpu->zeroPC();
-    cpu->ROR();
+    cpu->LDA(cpu->immM);
     cpu->print();
 
 }

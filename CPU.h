@@ -277,14 +277,32 @@ public:
 	void LDA(uint8_t mode) {
 		uint8_t value = readMem(mode);
 		ACC = value;
+
+		// Set affected flags
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void LDX(uint8_t mode) {
 		uint8_t value = readMem(mode);
 		X = value;
+
+		// Set affected flags
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void LDY(uint8_t mode) {
 		uint8_t value = readMem(mode);
 		Y = value;
+
+		// Set affected flags
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void STA(uint8_t mode) {
 		uint8_t value = ACC;
@@ -300,21 +318,51 @@ public:
 	}
 	void TAX() {
 		X = ACC;
+
+		// Set affected flags
+		if (X == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (X & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void TAY() {
 		Y = ACC;
+
+		// Set affected flags
+		if (Y == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (Y & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void TSX() {
 		X = SP;
+
+		// Set affected flags
+		if (X == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (X & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void TXA() {
 		ACC = X;
+
+		// Set affected flags
+		if (X == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (X & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void TXS() {
 		SP = X;
 	}
 	void TYA() {
 		ACC = Y;
+
+		// Set affected flags
+		if (X == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (X & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 
 	// Stack Instructions
@@ -333,6 +381,12 @@ public:
 		SP++;
 		uint16_t addr = SP + 0x100;
 		ACC = mem->read(addr);
+
+		// Set affected flags
+		if (X == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (X & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void PLP() {
 		SP++;
@@ -347,12 +401,30 @@ public:
 		value--;
 		PC = oldPC;
 		writeMem(mode, value);
+
+		// Set affected flags
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void DEX() {
 		X--;
+
+		// Set affected flags
+		if (X == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (X & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void DEY() {
 		Y--;
+
+		// Set affected flags
+		if (Y == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (Y & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void INC(uint8_t mode) {
 		uint16_t oldPC = PC;
@@ -360,12 +432,30 @@ public:
 		value++;
 		PC = oldPC;
 		writeMem(mode, value);
+
+		// Set affected flags
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void INX() {
 		X++;
+
+		// Set affected flags
+		if (X == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (X & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void INY() {
 		Y++;
+
+		// Set affected flags
+		if (Y == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (Y & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 
 	// Arithmetic Operations
@@ -401,14 +491,32 @@ public:
 	void AND(uint8_t mode) {
 		uint8_t value = ACC & readMem(mode);
 		ACC = value;
+
+		// Set affected flags
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void EOR(uint8_t mode) {
 		uint8_t value = ACC ^ readMem(mode);
 		ACC = value;
+
+		// Set affected flags
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void ORA(uint8_t mode) {
 		uint8_t value = ACC | readMem(mode);
 		ACC = value;
+
+		// Set affected flags
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 
 	// Bit Shifts

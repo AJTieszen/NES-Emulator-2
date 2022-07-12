@@ -34,6 +34,41 @@ private:
 	bool readFlag(int id) {
 		return (SF & 1 << id) != 0;
 	}
+	enum flags {
+		Carry, Zero, Interrupt, Decimal, Break, unused, Overflow, Negative
+	};
+	uint8_t readMem(uint8_t mode) {
+		uint16_t addr;
+		switch (mode) {
+		case 1: addr = abs(); break;
+		case 2: addr = abs_x(); break;
+		case 3: addr = abs_y(); break;
+		case 4: addr = imm(); break;
+		case 5: addr = ind(); break;
+		case 6: addr = x_ind(); break;
+		case 7: addr = ind_y(); break;
+		case 8: addr = zpg(); break;
+		case 9: addr = zpg_x(); break;
+		case 10: addr = zpg_y(); break;
+		}
+		return mem->read(addr);
+	}
+	void writeMem(uint8_t mode, uint8_t value) {
+		uint16_t addr;
+		switch (mode) {
+		case 1: addr = abs(); break;
+		case 2: addr = abs_x(); break;
+		case 3: addr = abs_y(); break;
+			// case 4: addr = imm(); break;
+		case 5: addr = ind(); break;
+		case 6: addr = x_ind(); break;
+		case 7: addr = ind_y(); break;
+		case 8: addr = zpg(); break;
+		case 9: addr = zpg_x(); break;
+		case 10: addr = zpg_y(); break;
+		}
+		mem->write(addr, value);
+	}
 
 	// Address Modes
 	uint16_t abs() {
@@ -97,39 +132,6 @@ private:
 		uint8_t addr = mem->read(PC + 1) + Y;
 		PC += 2;
 		return addr;
-	}
-
-	uint8_t readMem(uint8_t mode) {
-		uint16_t addr;
-		switch (mode) {
-		case 1: addr = abs(); break;
-		case 2: addr = abs_x(); break;
-		case 3: addr = abs_y(); break;
-		case 4: addr = imm(); break;
-		case 5: addr = ind(); break;
-		case 6: addr = x_ind(); break;
-		case 7: addr = ind_y(); break;
-		case 8: addr = zpg(); break;
-		case 9: addr = zpg_x(); break;
-		case 10: addr = zpg_y(); break;
-		}
-		return mem->read(addr);
-	}
-	void writeMem(uint8_t mode, uint8_t value) {
-		uint16_t addr;
-		switch (mode) {
-		case 1: addr = abs(); break;
-		case 2: addr = abs_x(); break;
-		case 3: addr = abs_y(); break;
-		// case 4: addr = imm(); break;
-		case 5: addr = ind(); break;
-		case 6: addr = x_ind(); break;
-		case 7: addr = ind_y(); break;
-		case 8: addr = zpg(); break;
-		case 9: addr = zpg_x(); break;
-		case 10: addr = zpg_y(); break;
-		}
-		mem->write(addr, value);
 	}
 
 public:
@@ -272,37 +274,36 @@ public:
 		PC = 0;
 	}
 
-// CPU Instructions
 	// Transfer Instructions
 	void LDA(uint8_t mode) {
 		uint8_t value = readMem(mode);
 		ACC = value;
 
 		// Set affected flags
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void LDX(uint8_t mode) {
 		uint8_t value = readMem(mode);
 		X = value;
 
 		// Set affected flags
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void LDY(uint8_t mode) {
 		uint8_t value = readMem(mode);
 		Y = value;
 
 		// Set affected flags
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void STA(uint8_t mode) {
 		uint8_t value = ACC;
@@ -320,37 +321,37 @@ public:
 		X = ACC;
 
 		// Set affected flags
-		if (X == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (X & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (X == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (X & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void TAY() {
 		Y = ACC;
 
 		// Set affected flags
-		if (Y == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (Y & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (Y == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (Y & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void TSX() {
 		X = SP;
 
 		// Set affected flags
-		if (X == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (X & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (X == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (X & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void TXA() {
 		ACC = X;
 
 		// Set affected flags
-		if (X == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (X & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (X == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (X & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void TXS() {
 		SP = X;
@@ -359,10 +360,10 @@ public:
 		ACC = Y;
 
 		// Set affected flags
-		if (X == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (X & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (X == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (X & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 
 	// Stack Instructions
@@ -383,10 +384,10 @@ public:
 		ACC = mem->read(addr);
 
 		// Set affected flags
-		if (X == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (X & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (X == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (X & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void PLP() {
 		SP++;
@@ -403,28 +404,28 @@ public:
 		writeMem(mode, value);
 
 		// Set affected flags
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void DEX() {
 		X--;
 
 		// Set affected flags
-		if (X == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (X & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (X == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (X & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void DEY() {
 		Y--;
 
 		// Set affected flags
-		if (Y == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (Y & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (Y == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (Y & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void INC(uint8_t mode) {
 		uint16_t oldPC = PC;
@@ -434,57 +435,57 @@ public:
 		writeMem(mode, value);
 
 		// Set affected flags
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void INX() {
 		X++;
 
 		// Set affected flags
-		if (X == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (X & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (X == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (X & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void INY() {
 		Y++;
 
 		// Set affected flags
-		if (Y == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (Y & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (Y == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (Y & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 
 	// Arithmetic Operations
 	void ADC(uint8_t mode) {
-		int value = ACC + readMem(mode) + readFlag(0);
+		int value = ACC + readMem(mode) + readFlag(Carry);
 		ACC = value;
 
 		// Set Affected Flags
-		if (value > 0xFF) setFlag(0); // Carry
-		else clearFlag(0);
-		if (value > 0x7F) setFlag(6); // Overflow
+		if (value > 0xFF) setFlag(Carry);
+		else clearFlag(Carry);
+		if (value > 0x7F) setFlag(Overflow);
 		else clearFlag(6);
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void SBC(uint8_t mode) {
-		int value = ACC - readMem(mode) - !readFlag(0);
+		int value = ACC - readMem(mode) - !readFlag(Carry);
 		ACC = value;
 
-		if (value < 0) clearFlag(0); // Carry
-		else setFlag(0);
-		if (value > 0x7F) setFlag(6); // Overflow
+		if (value < 0) clearFlag(Carry);
+		else setFlag(Carry);
+		if (value > 0x7F) setFlag(Overflow);
 		else clearFlag(6);
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 
 	// Logical Operations
@@ -493,170 +494,170 @@ public:
 		ACC = value;
 
 		// Set affected flags
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void EOR(uint8_t mode) {
 		uint8_t value = ACC ^ readMem(mode);
 		ACC = value;
 
 		// Set affected flags
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void ORA(uint8_t mode) {
 		uint8_t value = ACC | readMem(mode);
 		ACC = value;
 
 		// Set affected flags
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 
 	// Bit Shifts
 	void ASL() {
-		if (ACC & 0x80) setFlag(0);
-		else clearFlag(0);
+		if (ACC & 0x80) setFlag(Carry);
+		else clearFlag(Carry);
 		ACC = ACC << 1;
 
 		// Set Flags
-		if (ACC == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (ACC & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (ACC == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (ACC & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void LSR() {
-		if (ACC & 0x01) setFlag(0);
-		else clearFlag(0);
+		if (ACC & 0x01) setFlag(Carry);
+		else clearFlag(Carry);
 		ACC = ACC >> 1;
 
 		// Set Flags
-		if (ACC == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (ACC & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (ACC == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (ACC & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void ROL() {
-		if (ACC & 0x80) setFlag(0);
-		else clearFlag(0);
-		bool shiftIn = readFlag(0);
+		if (ACC & 0x80) setFlag(Carry);
+		else clearFlag(Carry);
+		bool shiftIn = readFlag(Carry);
 		ACC = (ACC << 1) + shiftIn;
 
 		// Set Flags
-		if (ACC == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (ACC & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (ACC == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (ACC & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void ROR() {
-		if (ACC & 0x01) setFlag(0);
-		else clearFlag(0);
-		bool shiftIn = readFlag(0);
+		if (ACC & 0x01) setFlag(Carry);
+		else clearFlag(Carry);
+		bool shiftIn = readFlag(Carry);
 		ACC = (ACC >> 1) + (shiftIn << 7);
 
 		// Set Flags
-		if (ACC == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (ACC & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (ACC == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (ACC & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void ASL(uint8_t mode) {
 		uint16_t oldPC = PC;
 		uint8_t value = readMem(mode);
 
-		if (value & 0x80) setFlag(0);
-		else clearFlag(0);
+		if (value & 0x80) setFlag(Carry);
+		else clearFlag(Carry);
 		value = value << 1;
 
 		PC = oldPC;
 		writeMem(mode, value);
 
 		// Set Flags
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void LSR(uint8_t mode) {
 		uint16_t oldPC = PC;
 		uint8_t value = readMem(mode);
 
-		if (value & 0x01) setFlag(0);
-		else clearFlag(0);
+		if (value & 0x01) setFlag(Carry);
+		else clearFlag(Carry);
 		value = value >> 1;
 
 		PC = oldPC;
 		writeMem(mode, value);
 
 		// Set Flags
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void ROL(uint8_t mode) {
 		uint16_t oldPC = PC;
 		uint8_t value = readMem(mode);
 
-		if (value & 0x80) setFlag(0);
-		else clearFlag(0);
-		bool shiftIn = readFlag(0);
+		if (value & 0x80) setFlag(Carry);
+		else clearFlag(Carry);
+		bool shiftIn = readFlag(Carry);
 		value = (value << 1) + shiftIn;
 
 		PC = oldPC;
 		writeMem(mode, value);
 
 		// Set Flags
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 	void ROR(uint8_t mode) {
 		uint16_t oldPC = PC;
 		uint8_t value = readMem(mode);
 
-		if (value & 0x01) setFlag(0);
-		else clearFlag(0);
-		bool shiftIn = readFlag(0);
+		if (value & 0x01) setFlag(Carry);
+		else clearFlag(Carry);
+		bool shiftIn = readFlag(Carry);
 		value = (value >> 1) + (shiftIn << 7);
 
 		PC = oldPC;
 		writeMem(mode, value);
 
 		// Set Flags
-		if (value == 0) setFlag(1);   // Zero
-		else clearFlag(1);
-		if (value & 0x80) setFlag(7); // Negative
-		else clearFlag(7);
+		if (value == 0) setFlag(Zero);
+		else clearFlag(Zero);
+		if (value & 0x80) setFlag(Negative);
+		else clearFlag(Negative);
 	}
 
 	// Flag instructions
 	void CLC() {
-		clearFlag(0);
+		clearFlag(Carry);
 	}
 	void CLD() {
-		cout << "Ricoh 2A03 variant omits decimal mode!";
+		std::cout << "Ricoh 2A03 variant omits decimal mode!";
 	}
 	void CLI() {
-		clearFlag(2);
+		clearFlag(Interrupt);
 	}
 	void CLV() {
-		clearFlag(6);
+		clearFlag(Overflow);
 	}
 	void SEC() {
-		setFlag(0);
+		setFlag(Carry);
 	}
 	void SED() {
-		cout << "Ricoh 2A03 variant omits decimal mode!";
+		std::cout << "Ricoh 2A03 variant omits decimal mode!";
 	}
 	void SEI() {
-		setFlag(2);
+		setFlag(Interrupt);
 	}
 };

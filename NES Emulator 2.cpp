@@ -21,11 +21,20 @@ int main()
 
     // Test CPU Instructions
     cpu->zeroPC();
-    mem->write(1, 0xac);
+    mem->write(1, 0xaa);
     cpu->LDA(4);
     cpu->print();
     cpu->zeroPC();
-    mem->write(1, 0x0f);
-    cpu->ORA(4);
+    cpu->ROR();
     cpu->print();
+    cpu->zeroPC();
+    cpu->ROR();
+    cpu->print();
+    cpu->zeroPC();
+    cpu->ROR();
+    cpu->print();
+    cpu->zeroPC();
+    cpu->ROR();
+    cpu->print();
+
 }

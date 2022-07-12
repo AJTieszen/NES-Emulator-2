@@ -374,17 +374,27 @@ public:
 		ACC = value;
 
 		// Set Affected Flags
-		SF = SF & 0b00111100;
 		if (value > 0xFF) setFlag(0); // Carry
+		else clearFlag(0);
 		if (value > 0x7F) setFlag(6); // Overflow
+		else clearFlag(6);
 		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
 		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 	void SBC(uint8_t mode) {
 		int value = ACC - readMem(mode) - !readFlag(0);
 		ACC = value;
 
-		if (value < 0) clearFlag(0);
+		if (value < 0) clearFlag(0); // Carry
+		else setFlag(0);
+		if (value > 0x7F) setFlag(6); // Overflow
+		else clearFlag(6);
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 
 	// Logical Operations
@@ -399,5 +409,53 @@ public:
 	void ORA(uint8_t mode) {
 		uint8_t value = ACC | readMem(mode);
 		ACC = value;
+	}
+
+	// Bit Shifts
+	void ASL() {
+		if (ACC & 0x80) setFlag(0);
+		else clearFlag(0);
+		ACC = ACC << 1;
+
+		// Set Flags
+		if (ACC == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (ACC & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
+	}
+	void LSR() {
+		if (ACC & 0x01) setFlag(0);
+		else clearFlag(0);
+		ACC = ACC >> 1;
+
+		// Set Flags
+		if (ACC == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (ACC & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
+	}
+	void ROL() {
+		if (ACC & 0x80) setFlag(0);
+		else clearFlag(0);
+		bool shiftIn = readFlag(0);
+		ACC = (ACC << 1) + shiftIn;
+
+		// Set Flags
+		if (ACC == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (ACC & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
+	}
+	void ROR() {
+		if (ACC & 0x01) setFlag(0);
+		else clearFlag(0);
+		bool shiftIn = readFlag(0);
+		ACC = (ACC >> 1) + (shiftIn << 7);
+
+		// Set Flags
+		if (ACC == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (ACC & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
 	}
 };

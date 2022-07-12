@@ -458,4 +458,74 @@ public:
 		if (ACC & 0x80) setFlag(7); // Negative
 		else clearFlag(7);
 	}
+	void ASL(uint8_t mode) {
+		uint16_t oldPC = PC;
+		uint8_t value = readMem(mode);
+
+		if (value & 0x80) setFlag(0);
+		else clearFlag(0);
+		value = value << 1;
+
+		PC = oldPC;
+		writeMem(mode, value);
+
+		// Set Flags
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
+	}
+	void LSR(uint8_t mode) {
+		uint16_t oldPC = PC;
+		uint8_t value = readMem(mode);
+
+		if (value & 0x01) setFlag(0);
+		else clearFlag(0);
+		value = value >> 1;
+
+		PC = oldPC;
+		writeMem(mode, value);
+
+		// Set Flags
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
+	}
+	void ROL(uint8_t mode) {
+		uint16_t oldPC = PC;
+		uint8_t value = readMem(mode);
+
+		if (value & 0x80) setFlag(0);
+		else clearFlag(0);
+		bool shiftIn = readFlag(0);
+		value = (value << 1) + shiftIn;
+
+		PC = oldPC;
+		writeMem(mode, value);
+
+		// Set Flags
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
+	}
+	void ROR(uint8_t mode) {
+		uint16_t oldPC = PC;
+		uint8_t value = readMem(mode);
+
+		if (value & 0x01) setFlag(0);
+		else clearFlag(0);
+		bool shiftIn = readFlag(0);
+		value = (value >> 1) + (shiftIn << 7);
+
+		PC = oldPC;
+		writeMem(mode, value);
+
+		// Set Flags
+		if (value == 0) setFlag(1);   // Zero
+		else clearFlag(1);
+		if (value & 0x80) setFlag(7); // Negative
+		else clearFlag(7);
+	}
 };

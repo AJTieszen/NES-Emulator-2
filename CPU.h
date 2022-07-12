@@ -528,4 +528,27 @@ public:
 		if (value & 0x80) setFlag(7); // Negative
 		else clearFlag(7);
 	}
+
+	// Flag instructions
+	void CLC() {
+		clearFlag(0);
+	}
+	void CLD() {
+		cout << "Ricoh 2A03 variant omits decimal mode!";
+	}
+	void CLI() {
+		clearFlag(2);
+	}
+	void CLV() {
+		clearFlag(6);
+	}
+	void SEC() {
+		setFlag(0);
+	}
+	void SED() {
+		cout << "Ricoh 2A03 variant omits decimal mode!";
+	}
+	void SEI() {
+		setFlag(2);
+	}
 };

@@ -274,6 +274,11 @@ public:
 		PC = 0;
 	}
 
+// CPU Instructions
+	enum mode {
+		abs = 1, abs_x, abs_y, imm, ind, x_ind, ind_y, zpg, zpg_x, zpg_y
+	};
+
 	// Transfer Instructions
 	void LDA(uint8_t mode) {
 		uint8_t value = readMem(mode);

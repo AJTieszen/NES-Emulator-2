@@ -20,9 +20,11 @@ int main()
     cpu->test();
 
     // Test CPU Instructions
+    cpu->CLC();
+    mem->write(1, 128);
     cpu->zeroPC();
-    mem->write(1, 120);
-    cpu->LDA(cpu->immM);
+    cpu->print();
+    cpu->BCS();
     cpu->print();
 
 }

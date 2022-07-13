@@ -724,4 +724,46 @@ public:
 			clearFlag(Negative);
 		}
 	}
+
+	// Conditional Branches
+	void BCC() {
+		int8_t offset = mem->read(PC + 1);
+		if (!readFlag(Carry)) PC += offset;
+		PC += 2;
+	}
+	void BCS() {
+		int8_t offset = mem->read(PC + 1);
+		if (readFlag(Carry)) PC += offset;
+		PC += 2;
+	}
+	void BEQ() {
+		int8_t offset = mem->read(PC + 1);
+		if (readFlag(Zero)) PC += offset;
+		PC += 2;
+	}
+	void BMI() {
+		int8_t offset = mem->read(PC + 1);
+		if (readFlag(Negative)) PC += offset;
+		PC += 2;
+	}
+	void BNE() {
+		int8_t offset = mem->read(PC + 1);
+		if (!readFlag(Zero)) PC += offset;
+		PC += 2;
+	}
+	void BPL() {
+		int8_t offset = mem->read(PC + 1);
+		if (!readFlag(Negative)) PC += offset;
+		PC += 2;
+	}
+	void BVC() {
+		int8_t offset = mem->read(PC + 1);
+		if (!readFlag(Overflow)) PC += offset;
+		PC += 2;
+	}
+	void BVS() {
+		int8_t offset = mem->read(PC + 1);
+		if (readFlag(Overflow)) PC += offset;
+		PC += 2;
+	}
 };

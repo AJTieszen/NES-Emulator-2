@@ -340,6 +340,8 @@ public:
 		else clearFlag(Zero);
 		if (X & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC++;
 	}
 	void TAY() {
 		Y = ACC;
@@ -349,6 +351,8 @@ public:
 		else clearFlag(Zero);
 		if (Y & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC++;
 	}
 	void TSX() {
 		X = SP;
@@ -358,6 +362,8 @@ public:
 		else clearFlag(Zero);
 		if (X & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC ++;
 	}
 	void TXA() {
 		ACC = X;
@@ -367,9 +373,12 @@ public:
 		else clearFlag(Zero);
 		if (X & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC ++;
 	}
 	void TXS() {
 		SP = X;
+		PC++;
 	}
 	void TYA() {
 		ACC = Y;
@@ -379,15 +388,19 @@ public:
 		else clearFlag(Zero);
 		if (X & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC++;
 	}
 
 	// Stack Instructions
 	void PHA() {
 		push(ACC);
+		PC++;
 	}
 	void PHP() {
-		setFlag(4);
+		setFlag(Break);
 		push(SF);
+		PC ++;
 	}
 	void PLA() {
 		ACC = pull();
@@ -397,9 +410,12 @@ public:
 		else clearFlag(Zero);
 		if (X & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC ++;
 	}
 	void PLP() {
 		SF = pull();
+		PC ++;
 	}
 
 	// Increments and Decrements
@@ -424,6 +440,8 @@ public:
 		else clearFlag(Zero);
 		if (X & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC ++;
 	}
 	void DEY() {
 		Y--;
@@ -433,6 +451,8 @@ public:
 		else clearFlag(Zero);
 		if (Y & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC ++;
 	}
 	void INC(uint8_t mode) {
 		uint16_t oldPC = PC;
@@ -455,6 +475,8 @@ public:
 		else clearFlag(Zero);
 		if (X & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC ++;
 	}
 	void INY() {
 		Y++;
@@ -464,6 +486,8 @@ public:
 		else clearFlag(Zero);
 		if (Y & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC++;
 	}
 
 	// Arithmetic Operations
@@ -538,6 +562,8 @@ public:
 		else clearFlag(Zero);
 		if (ACC & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC++;
 	}
 	void LSR() {
 		if (ACC & 0x01) setFlag(Carry);
@@ -549,6 +575,8 @@ public:
 		else clearFlag(Zero);
 		if (ACC & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC ++;
 	}
 	void ROL() {
 		if (ACC & 0x80) setFlag(Carry);
@@ -561,6 +589,8 @@ public:
 		else clearFlag(Zero);
 		if (ACC & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC ++;
 	}
 	void ROR() {
 		if (ACC & 0x01) setFlag(Carry);
@@ -573,6 +603,8 @@ public:
 		else clearFlag(Zero);
 		if (ACC & 0x80) setFlag(Negative);
 		else clearFlag(Negative);
+
+		PC ++;
 	}
 	void ASL(uint8_t mode) {
 		uint16_t oldPC = PC;
@@ -648,24 +680,31 @@ public:
 	// Flag instructions
 	void CLC() {
 		clearFlag(Carry);
+		PC++;
 	}
 	void CLD() {
 		std::cout << "Ricoh 2A03 variant omits decimal mode!";
+		PC ++;
 	}
 	void CLI() {
 		clearFlag(Interrupt);
+		PC ++;
 	}
 	void CLV() {
 		clearFlag(Overflow);
+		PC ++;
 	}
 	void SEC() {
 		setFlag(Carry);
+		PC ++;
 	}
 	void SED() {
 		std::cout << "Ricoh 2A03 variant omits decimal mode!";
+		PC ++;
 	}
 	void SEI() {
 		setFlag(Interrupt);
+		PC ++;
 	}
 
 	// Comparisons

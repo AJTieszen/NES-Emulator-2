@@ -665,4 +665,63 @@ public:
 	void SEI() {
 		setFlag(Interrupt);
 	}
+
+	// Comparisons
+	void CMP(uint8_t mode) {
+		uint8_t value = readMem(mode);
+
+		if (ACC == value) {
+			setFlag(Zero);
+			setFlag(Carry);
+			clearFlag(Negative);
+		}
+		if (ACC < value) {
+			clearFlag(Zero);
+			clearFlag(Carry);
+			setFlag(Negative);
+		}
+		if (ACC > value) {
+			clearFlag(Zero);
+			setFlag(Carry);
+			clearFlag(Negative);
+		}
+	}
+	void CPX(uint8_t mode) {
+		uint8_t value = readMem(mode);
+
+		if (Y == value) {
+			setFlag(Zero);
+			setFlag(Carry);
+			clearFlag(Negative);
+		}
+		if (Y < value) {
+			clearFlag(Zero);
+			clearFlag(Carry);
+			setFlag(Negative);
+		}
+		if (Y > value) {
+			clearFlag(Zero);
+			setFlag(Carry);
+			clearFlag(Negative);
+		}
+	}
+	void CPY(uint8_t mode) {
+		uint8_t value = readMem(mode);
+
+		if (Y == value) {
+			setFlag(Zero);
+			setFlag(Carry);
+			clearFlag(Negative);
+		}
+		if (Y < value) {
+			clearFlag(Zero);
+			clearFlag(Carry);
+			setFlag(Negative);
+		}
+		if (Y > value) {
+			clearFlag(Zero);
+			setFlag(Carry);
+			clearFlag(Negative);
+		}
+	}
 };

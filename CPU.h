@@ -17,7 +17,7 @@ private:
 	uint8_t X = 0;		// X Register
 	uint8_t Y = 0;		// Y Register
 	uint8_t SF = 0;		// Status Flags
-	uint8_t SP = 0;		// Stack Pointer
+	uint8_t SP = 0xff;		// Stack Pointer
 
 	// CPU Status
 	unsigned int cycle = 0;
@@ -68,6 +68,16 @@ private:
 		case 10: addr = zpg_y(); break;
 		}
 		mem->write(addr, value);
+	}
+	void push(uint8_t value) {
+		uint16_t addr = SP + 0x100;
+		mem->write(addr, value);
+		SP--;
+	}
+	uint8_t pull() {
+		SP++;
+		uint16_t addr = SP + 0x100;
+		return mem->read(addr);
 	}
 
 	// Address Modes
@@ -373,20 +383,14 @@ public:
 
 	// Stack Instructions
 	void PHA() {
-		uint16_t addr = SP + 0x100;
-		mem->write(addr, ACC);
-		SP--;
+		push(ACC);
 	}
 	void PHP() {
-		uint16_t addr = SP + 0x100;
 		setFlag(4);
-		mem->write(addr, SF);
-		SP--;
+		push(SF);
 	}
 	void PLA() {
-		SP++;
-		uint16_t addr = SP + 0x100;
-		ACC = mem->read(addr);
+		ACC = pull();
 
 		// Set affected flags
 		if (X == 0) setFlag(Zero);
@@ -395,9 +399,7 @@ public:
 		else clearFlag(Negative);
 	}
 	void PLP() {
-		SP++;
-		uint16_t addr = SP + 0x100;
-		SF = mem->read(addr);
+		SF = pull();
 	}
 
 	// Increments and Decrements
@@ -765,5 +767,22 @@ public:
 		int8_t offset = mem->read(PC + 1);
 		if (readFlag(Overflow)) PC += offset;
 		PC += 2;
+	}
+
+	// Jumps
+	void JMP(uint8_t mode) {
+		uint16_t addr;
+		if (mode == absM) addr = abs();
+		if (mode == indM) addr = ind();
+		PC = addr;
+	}
+	void JSR(uint8_t mode) {
+		push(PC >> 8);
+		push(PC);
+		JMP(mode);
+	}
+	void RTS() {
+		// pull return address from stack
+		PC = pull() + (pull() << 8);
 	}
 };

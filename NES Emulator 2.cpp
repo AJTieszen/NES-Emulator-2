@@ -19,12 +19,20 @@ int main()
     mem->test();
     cpu->test();
 
+    mem->clear();
+
     // Test CPU Instructions
-    cpu->CLC();
-    mem->write(1, 128);
     cpu->zeroPC();
+    mem->write(1, 0xce);
+    mem->write(2, 0xfa);
+    mem->write(0xface, 0x34);
+    mem->write(0xface + 1, 0x12);
+    cpu->JMP(cpu->indM);
     cpu->print();
-    cpu->BCS();
+    cpu->JSR(cpu->absM);
     cpu->print();
+    cpu->RTS();
+    cpu->print();
+
 
 }

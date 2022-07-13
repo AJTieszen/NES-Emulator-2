@@ -16,10 +16,6 @@ int main()
     cout << "Starting NES Emulator\n";
 
     // Test Modules
-    mem->test();
-    cpu->test();
-
-    mem->clear();
 
     // Test CPU Instructions
     cpu->zeroPC();
@@ -27,12 +23,19 @@ int main()
     mem->write(2, 0xfa);
     mem->write(0xface, 0x34);
     mem->write(0xface + 1, 0x12);
+    mem->write(0xfffa, 0xa5);
+    mem->write(0xfffb, 0x5a);
+
     cpu->JMP(cpu->indM);
     cpu->print();
     cpu->JSR(cpu->absM);
     cpu->print();
     cpu->RTS();
     cpu->print();
+    cout << "\n\n";
 
-
+    cpu->BRK();
+    cpu->print();
+    cpu->RTI();
+    cpu->print();
 }

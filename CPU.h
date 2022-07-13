@@ -824,4 +824,20 @@ public:
 		// pull return address from stack
 		PC = pull() + (pull() << 8);
 	}
+
+	// Interrupts (software)
+	void BRK() {
+		setFlag(Interrupt);
+		setFlag(Break);
+		PC += 2;
+		push(PC >> 8);
+		push(PC);
+		push(SF);
+
+		PC = mem->read(0xFFFA) + (mem->read(0xFFFB) << 8);
+	}
+	void RTI() {
+		SF = pull() & 0xCF; // ignore break and unused flags
+		PC = pull() + (pull() << 8);
+	}
 };

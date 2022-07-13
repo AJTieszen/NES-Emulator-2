@@ -840,4 +840,15 @@ public:
 		SF = pull() & 0xCF; // ignore break and unused flags
 		PC = pull() + (pull() << 8);
 	}
+
+	// Miscellaneous
+	void BIT(uint8_t mode) {
+		uint8_t value = readMem(mode);
+		SF = SF | (value & 0b11000000);
+		if ((value & ACC) == 0) clearFlag(Zero);
+		else setFlag(Zero);
+	}
+	void NOP() {
+		PC++;
+	}
 };

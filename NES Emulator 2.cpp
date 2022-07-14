@@ -18,24 +18,9 @@ int main()
     // Test Modules
 
     // Test CPU Instructions
-    cpu->zeroPC();
-    mem->write(1, 0xce);
-    mem->write(2, 0xfa);
-    mem->write(0xface, 0x34);
-    mem->write(0xface + 1, 0x12);
-    mem->write(0xfffa, 0xa5);
-    mem->write(0xfffb, 0x5a);
+    mem->write(0xFFFA, 0x00);
+    mem->write(0xFFFB, 0x00);
 
-    cpu->JMP(cpu->indM);
-    cpu->print();
-    cpu->JSR(cpu->absM);
-    cpu->print();
-    cpu->RTS();
-    cpu->print();
-    cout << "\n\n";
-
-    cpu->BRK();
-    cpu->print();
-    cpu->RTI();
+    cpu->nmi();
     cpu->print();
 }

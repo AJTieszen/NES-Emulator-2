@@ -16,14 +16,16 @@ private:
 	uint8_t ACC = 0;	// Accumulator
 	uint8_t X = 0;		// X Register
 	uint8_t Y = 0;		// Y Register
-	uint8_t SF = 0;		// Status Flags
-	uint8_t SP = 0xff;		// Stack Pointer
+	uint8_t SF = 0x20;	// Status Flags
+	uint8_t SP = 0xFF;	// Stack Pointer
 
 	// CPU Status
 	unsigned int cycle = 0;
-	bool extraCycle = false;
 
 	// Helper Functions
+	enum flags {
+		Carry, Zero, Interrupt, Decimal, Break, unused, Overflow, Negative
+	};
 	void setFlag(int id) {
 		SF = SF | 1 << id;
 	}
@@ -34,9 +36,6 @@ private:
 	bool readFlag(int id) {
 		return (SF & 1 << id) != 0;
 	}
-	enum flags {
-		Carry, Zero, Interrupt, Decimal, Break, unused, Overflow, Negative
-	};
 	uint8_t readMem(uint8_t mode) {
 		uint16_t addr;
 		switch (mode) {
@@ -278,7 +277,12 @@ public:
 		mem->clear();
 	}
 	void print() {
-		printf("\nProgram Counter: %0004x | Accumulator: %02x | X: %02x | Y: %02x | Flags: %02x | Stack Pointer: %02x", PC, ACC, X, Y, SF, SP);
+		printf("\nProgram Counter: %0004x | Accumulator: %02x | X: %02x | Y: %02x | Stack Pointer: %02x", PC, ACC, X, Y, SP);
+		printf("\nFlags: NV-BDIZC | Cycle: %d", cycle);
+		printf("\n       ");
+		for (int i = 7; i >= 0; i--) {
+			std::cout << readFlag(i);
+		}
 	}
 	void zeroPC() {
 		PC = 0;
@@ -850,5 +854,39 @@ public:
 	}
 	void NOP() {
 		PC++;
+	}
+
+	// Hardware Interrupts
+	void reset() {
+		setFlag(unused);	// Internally hardwired as 1
+		setFlag(Interrupt);	// Block IRQ's until properly initialized
+		clearFlag(Decimal);
+		SP = 0xFD;
+
+		cycle = 7;
+		PC = mem->read(0xFFFC) + (mem->read(0xFFFD) << 8);
+	}
+	void irq() {
+		clearFlag(Break);
+		cycle += 7;
+
+		if (!readFlag(Interrupt)) {
+			PC += 2;
+			push(PC >> 8);
+			push(PC);
+			push(SF);
+			PC = mem->read(0xFFFE) + (mem->read(0xFFFF) << 8);
+			setFlag(Interrupt);
+		}
+	}
+	void nmi() {
+		setFlag(Interrupt);
+		PC += 2;
+		push(PC >> 8);
+		push(PC);
+		push(SF);
+
+		PC = mem->read(0xFFFA) + (mem->read(0xFFFB) << 8);
+
 	}
 };

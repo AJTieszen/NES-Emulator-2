@@ -45,7 +45,7 @@ public:
 			ram[i % 0x0800] = 0;
 			ppu[i % 0x0008] = 0;
 			ram[i % 0x0020] = 0;
-			ram[i] = 0;
+			crt[i] = 0;
 		}
 	}
 

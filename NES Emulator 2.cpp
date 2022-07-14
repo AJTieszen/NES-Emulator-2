@@ -16,11 +16,13 @@ int main()
     cout << "Starting NES Emulator\n";
 
     // Test Modules
+    cpu->test();
+    mem->test();
+    mem->clear()
 
     // Test CPU Instructions
-    mem->write(0xFFFA, 0x00);
-    mem->write(0xFFFB, 0x00);
+    mem->write(0x00, 0x00);
 
-    cpu->nmi();
+    cpu->execute();
     cpu->print();
 }

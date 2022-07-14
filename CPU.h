@@ -21,6 +21,7 @@ private:
 
 	// CPU Status
 	unsigned int cycle = 0;
+	bool extraCycle = false;
 
 	// Helper Functions
 	enum flags {
@@ -89,14 +90,23 @@ private:
 	uint16_t abs_x() {
 		uint8_t ll = mem->read(PC + 1);
 		uint8_t hh = mem->read(PC + 2);
+		uint16_t addr = ll + (hh << 8) + X;
+
+		// check if page boundary crossed
+		if ((addr >> 8) != (PC >> 8)) extraCycle++;
 		PC += 3;
-		return ll + (hh << 8) + X;
+		return addr;
 	}
 	uint16_t abs_y() {
 		uint8_t ll = mem->read(PC + 1);
 		uint8_t hh = mem->read(PC + 2);
+		uint16_t addr = ll + (hh << 8) + Y;
+
+		// check if page boundary crossed
+		if ((addr >> 8) != (PC >> 8)) extraCycle++;
+
 		PC += 3;
-		return ll + (hh << 8) + Y;
+		return addr;
 	}
 	uint16_t imm() {
 		uint16_t addr = PC + 1;
@@ -117,11 +127,16 @@ private:
 		return ll + (hh << 8);
 	}
 	uint16_t ind_y() {
-		uint16_t addr = mem->read(PC + 1) + Y;
+		uint16_t addr = mem->read(PC + 1);
 		uint8_t ll = mem->read(addr);
 		uint8_t hh = mem->read(addr + 1);
+		addr = ll + (hh << 8) + Y;
+
+		// check if page boundary crossed
+		if ((addr >> 8) != (PC >> 8)) extraCycle++;
+
 		PC += 2;
-		return ll + (hh << 8);
+		return addr;
 	}
 	uint16_t rel() {
 		int8_t offset = mem->read(PC + 1);
@@ -228,9 +243,9 @@ public:
 		PC = 0;
 		std::cout << "\n  Indirect, Y mode: ";{
 			value = ind_y();
-			if (value == 0xACED) std::cout << "OK";
+			if (value == 0xCECB) std::cout << "OK";
 			else {
-				printf("Error: Expected aced, got %0004x", value);
+				printf("Error: Expected cecb, got %0004x", value);
 				err_cnt++;
 			}
 		}
@@ -772,44 +787,68 @@ public:
 
 	// Conditional Branches
 	void BCC() {
+		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
 		if (!readFlag(Carry)) PC += offset;
 		PC += 2;
+
+		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;;
 	}
 	void BCS() {
+		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
 		if (readFlag(Carry)) PC += offset;
 		PC += 2;
+
+		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
 	}
 	void BEQ() {
+		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
 		if (readFlag(Zero)) PC += offset;
 		PC += 2;
+
+		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
 	}
 	void BMI() {
+		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
 		if (readFlag(Negative)) PC += offset;
 		PC += 2;
+
+		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
 	}
 	void BNE() {
+		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
 		if (!readFlag(Zero)) PC += offset;
 		PC += 2;
+
+		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
 	}
 	void BPL() {
+		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
 		if (!readFlag(Negative)) PC += offset;
 		PC += 2;
+
+		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
 	}
 	void BVC() {
+		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
 		if (!readFlag(Overflow)) PC += offset;
 		PC += 2;
+
+		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
 	}
 	void BVS() {
+		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
 		if (readFlag(Overflow)) PC += offset;
 		PC += 2;
+
+		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
 	}
 
 	// Jumps
@@ -888,5 +927,154 @@ public:
 
 		PC = mem->read(0xFFFA) + (mem->read(0xFFFB) << 8);
 
+	}
+
+	void execute() {
+		uint8_t opcode = mem->read(PC);
+		extraCycle = false;
+
+		switch (opcode) {
+		default: std::cout << "Error: illegal opcode."; break;
+
+			// ADC
+		case 0x69:
+			ADC(immM);
+			cycle += 2;
+			break;
+		case 0x65:
+			ADC(zpgM);
+			cycle += 3;
+			break;
+		case 0x75:
+			ADC(zpg_xM);
+			cycle += 4;
+			break;
+		case 0x6D:
+			ADC(absM);
+			cycle += 4;
+			break;
+		case 0x7D:
+			ADC(abs_xM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0x79:
+			ADC(abs_yM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0x61:
+			ADC(x_indM);
+			cycle += 6;
+			break;
+		case 0x71:
+			ADC(ind_yM);
+			cycle += 5 + extraCycle;
+			break;
+
+			// AND
+		case 0x29:
+			AND(immM);
+			cycle += 2;
+			break;
+		case 0x25:
+			AND(zpgM);
+			cycle += 3;
+			break;
+		case 0x35:
+			AND(zpg_xM);
+			cycle += 4;
+			break;
+		case 0x2D:
+			AND(absM);
+			cycle += 4;
+			break;
+		case 0x3D:
+			AND(abs_xM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0x39:
+			AND(abs_yM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0x21:
+			AND(x_indM);
+			cycle += 6;
+			break;
+		case 0x31:
+			AND(ind_yM);
+			cycle += 5 + extraCycle;
+			break;
+
+			// ASL
+		case 0x0A:
+			ASL();
+			cycle += 2;
+			break;
+		case 0x06:
+			ASL(zpgM);
+			cycle += 5;
+			break;
+		case 0x16:
+			ASL(zpg_xM);
+			cycle += 6;
+			break;
+		case 0x0E:
+			ASL(absM);
+			cycle += 6;
+			break;
+		case 0x1E:
+			ASL(absM);
+			cycle += 7;
+			break;
+
+			// Conditional Branches
+		case 0x90:
+			BCC();
+			cycle += 2 + extraCycle;
+			break;
+		case 0xB0:
+			BCS();
+			cycle += 2 + extraCycle;
+			break;
+		case 0xF0:
+			BEQ();
+			cycle += 2 + extraCycle;
+			break;
+		case 0x30:
+			BMI();
+			cycle += 2 + extraCycle;
+			break;
+		case 0xD0:
+			BNE();
+			cycle += 2 + extraCycle;
+			break;
+		case 0x10:
+			BPL();
+			cycle += 2 + extraCycle;
+			break;
+		case 0x50:
+			BVC();
+			cycle += 2 + extraCycle;
+			break;
+		case 0x70:
+			BVS();
+			cycle += 2 + extraCycle;
+			break;
+
+			// BIT
+		case 0x24:
+			BIT(zpgM);
+			cycle += 3;
+			break;
+		case 0x2C:
+			BIT(absM);
+			cycle += 4;
+			break;
+
+			// BRK
+		case 0x00:
+			BRK();
+			cycle += 7;
+			break;
+		}
 	}
 };

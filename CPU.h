@@ -1075,6 +1075,110 @@ public:
 			BRK();
 			cycle += 7;
 			break;
+
+			// Clear Flags
+		case 0x18:
+			CLC();
+			cycle += 2;
+			break;
+		case 0xD8:
+			CLD();
+			cycle += 2;
+			break;
+		case 0x58:
+			CLI();
+			cycle += 2;
+			break;
+		case 0xB8:
+			CLV();
+			cycle += 2;
+			break;
+
+			// Compare with Accumulator
+		case 0xC9:
+			CMP(immM);
+			cycle += 2;
+			break;
+		case 0xC5:
+			CMP(zpgM);
+			cycle += 3;
+			break;
+		case 0xD5:
+			CMP(zpg_xM);
+			cycle += 4;
+			break;
+		case 0xCD:
+			CMP(absM);
+			cycle += 4;
+			break;
+		case 0xDD:
+			CMP(abs_xM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0xD9:
+			CMP(abs_yM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0xC1:
+			CMP(x_indM);
+			cycle += 6;
+			break;
+		case 0xD1:
+			CMP(ind_yM);
+			cycle += 5 + extraCycle;
+			break;
+
+			// Compare with XY Registers
+		case 0xE0:
+			CPX(immM);
+			cycle += 2;
+			break;
+		case 0xE4:
+			CPX(zpgM);
+			cycle += 3;
+			break;
+		case 0xEC:
+			CPX(absM);
+			cycle += 4;
+			break;
+		case 0xC0:
+			CPY(immM);
+			cycle += 2;
+			break;
+		case 0xC4:
+			CPY(zpgM);
+			cycle += 3;
+			break;
+		case 0xCC:
+			CPY(absM);
+			cycle += 4;
+			break;
+
+		// DEC
+		case 0xC6:
+			DEC(zpgM);
+			cycle += 5;
+			break;
+		case 0xD6:
+			DEC(zpg_xM);
+			cycle += 6;
+			break;
+		case 0xCE:
+			DEC(absM);
+			cycle += 6;
+			break;
+		case 0xDE:
+			DEC(abs_xM);
+			cycle += 7;
+			break;
+		case 0xCA:
+			DEX();
+			cycle += 2;
+			break;
+		case 0x88:
+			DEY();
+			cycle += 2;
+			break;
 		}
 	}
 };

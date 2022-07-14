@@ -18,10 +18,10 @@ int main()
     // Test Modules
     cpu->test();
     mem->test();
-    mem->clear()
+    mem->clear();
 
     // Test CPU Instructions
-    mem->write(0x00, 0x00);
+    mem->write(0x00, 0x88);
 
     cpu->execute();
     cpu->print();

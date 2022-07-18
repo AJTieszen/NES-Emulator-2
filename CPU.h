@@ -789,63 +789,89 @@ public:
 	void BCC() {
 		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
-		if (!readFlag(Carry)) PC += offset;
-		PC += 2;
+		if (!readFlag(Carry)) {
+			if ((PC & 0x00FF) + offset > 0xFF || (PC & 0x00FF) + offset < 0) cycle += 2;
+			else cycle++;
 
-		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;;
+			PC += offset;
+		}
+		PC += 2;
 	}
 	void BCS() {
 		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
-		if (readFlag(Carry)) PC += offset;
-		PC += 2;
+		if (readFlag(Carry)) {
+			if ((PC & 0x00FF) + offset > 0xFF || (PC & 0x00FF) + offset < 0) cycle += 2;
+			else cycle++;
 
-		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
+			PC += offset;
+		}
+		PC += 2;
 	}
 	void BEQ() {
 		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
-		if (readFlag(Zero)) PC += offset;
-		PC += 2;
+		if (readFlag(Zero)) {
+			if ((PC & 0x00FF) + offset > 0xFF || (PC & 0x00FF) + offset < 0) cycle += 2;
+			else cycle++;
 
-		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
+			PC += offset;
+		}
+		PC += 2;
 	}
 	void BMI() {
 		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
-		if (readFlag(Negative)) PC += offset;
-		PC += 2;
+		if (readFlag(Negative)) {
+			if ((PC & 0x00FF) + offset > 0xFF || (PC & 0x00FF) + offset < 0) cycle += 2;
+			else cycle++;
 
-		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
+			PC += offset;
+		}
+		PC += 2;
 	}
 	void BNE() {
 		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
-		if (!readFlag(Zero)) PC += offset;
-		PC += 2;
+		if (!readFlag(Zero)) {
+			if ((PC & 0x00FF) + offset > 0xFF || (PC & 0x00FF) + offset < 0) cycle += 2;
+			else cycle++;
 
-		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
+			PC += offset;
+		}
+		PC += 2;
 	}
 	void BPL() {
 		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
-		if (!readFlag(Negative)) PC += offset;
-		PC += 2;
+		if (!readFlag(Negative)) {
+			if ((PC & 0x00FF) + offset > 0xFF || (PC & 0x00FF) + offset < 0) cycle += 2;
+			else cycle++;
 
-		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
+			PC += offset;
+		}
+		PC += 2;
 	}
 	void BVC() {
 		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
-		if (!readFlag(Overflow)) PC += offset;
-		PC += 2;
+		if (!readFlag(Overflow)) {
+			if ((PC & 0x00FF) + offset > 0xFF || (PC & 0x00FF) + offset < 0) cycle += 2;
+			else cycle++;
 
-		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
+			PC += offset;
+		}
+		PC += 2;
 	}
 	void BVS() {
 		uint16_t oldPC = PC;
 		int8_t offset = mem->read(PC + 1);
-		if (readFlag(Overflow)) PC += offset;
+		if (readFlag(Overflow)) {
+			if ((PC & 0x00FF) + offset > 0xFF || (PC & 0x00FF) + offset < 0) cycle += 2;
+			else cycle++;
+
+			PC += offset;
+		}
 		PC += 2;
 
 		if ((PC >> 8) != (oldPC >> 8)) extraCycle = true;
@@ -934,7 +960,11 @@ public:
 		extraCycle = false;
 
 		switch (opcode) {
-		default: std::cout << "Error: illegal opcode."; break;
+			// Catch illegal opcodes
+		default:
+			std::cout << "\nError: illegal opcode: ";
+			printf("%02x.", opcode);
+		break;
 
 			// ADC
 		case 0x69:
@@ -1029,35 +1059,35 @@ public:
 			// Conditional Branches
 		case 0x90:
 			BCC();
-			cycle += 2 + extraCycle;
+			cycle += 2;
 			break;
 		case 0xB0:
 			BCS();
-			cycle += 2 + extraCycle;
+			cycle += 2;
 			break;
 		case 0xF0:
 			BEQ();
-			cycle += 2 + extraCycle;
+			cycle += 2;
 			break;
 		case 0x30:
 			BMI();
-			cycle += 2 + extraCycle;
+			cycle += 2;
 			break;
 		case 0xD0:
 			BNE();
-			cycle += 2 + extraCycle;
+			cycle += 2;
 			break;
 		case 0x10:
 			BPL();
-			cycle += 2 + extraCycle;
+			cycle += 2;
 			break;
 		case 0x50:
 			BVC();
-			cycle += 2 + extraCycle;
+			cycle += 2;
 			break;
 		case 0x70:
 			BVS();
-			cycle += 2 + extraCycle;
+			cycle += 2;
 			break;
 
 			// BIT
@@ -1571,6 +1601,28 @@ public:
 		case 0x8C:
 			STY(absM);
 			cycle += 4;
+			break;
+
+			// Transfer Registers
+		case 0xAA:
+			TAX();
+			cycle += 2;
+			break;
+		case 0xA8:
+			TAY();
+			cycle += 2;
+			break;
+		case 0xBA:
+			TSX();
+			cycle += 2;
+			break;
+		case 0x8A:
+			TXA();
+			cycle += 2;
+			break;
+		case 0x98:
+			TYA();
+			cycle += 2;
 			break;
 		}
 	}

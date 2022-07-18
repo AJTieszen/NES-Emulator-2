@@ -20,9 +20,11 @@ int main()
     mem->test();
     mem->clear();
 
-    // Test CPU Instructions
-    mem->write(0x00, 0x88);
-
-    cpu->execute();
-    cpu->print();
+    // Check legal opcode count
+    for (int i = 0; i <= 0xff; i++) {
+        cpu->zeroPC();
+        mem->write(0, i);
+        cpu->execute();
+    }
+    cout << "\n" << cpu->illegal_opcodes;
 }

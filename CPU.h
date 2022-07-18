@@ -1179,6 +1179,399 @@ public:
 			DEY();
 			cycle += 2;
 			break;
+
+			// EOR
+		case 0x49:
+			EOR(immM);
+			cycle += 2;
+			break;
+		case 0x45:
+			EOR(zpgM);
+			cycle += 3;
+			break;
+		case 0x55:
+			EOR(zpg_xM);
+			cycle += 4;
+			break;
+		case 0x4D:
+			EOR(absM);
+			cycle += 4;
+			break;
+		case 0x5D:
+			EOR(abs_xM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0x59:
+			EOR(abs_yM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0x41:
+			EOR(x_indM);
+			cycle += 6;
+			break;
+		case 0x51:
+			EOR(ind_yM);
+			cycle += 5 + extraCycle;
+			break;
+
+			// INC
+		case 0xE6:
+			INC(zpgM);
+			cycle += 5;
+			break;
+		case 0xF6:
+			INC(zpg_xM);
+			cycle += 6;
+			break;
+		case 0xEE:
+			INC(absM);
+			cycle += 6;
+			break;
+		case 0xFE:
+			INC(abs_xM);
+			cycle += 7;
+			break;
+		case 0xE8:
+			INX();
+			cycle += 2;
+			break;
+		case 0xC8:
+			INY();
+			cycle += 2;
+			break;
+
+			// Jumps
+		case 0x4C:
+			JMP(absM);
+			cycle += 3;
+			break;
+		case 0x6C:
+			JMP(indM);
+			cycle += 3;
+			break;
+		case 0x20:
+			JSR(absM);
+			cycle += 3;
+			break;
+
+			// LDA
+		case 0xA9:
+			ADC(immM);
+			cycle += 2;
+			break;
+		case 0xA5:
+			ADC(zpgM);
+			cycle += 3;
+			break;
+		case 0xB5:
+			ADC(zpg_xM);
+			cycle += 4;
+			break;
+		case 0xAD:
+			ADC(absM);
+			cycle += 4;
+			break;
+		case 0xBD:
+			ADC(abs_xM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0xB9:
+			ADC(abs_yM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0xA1:
+			ADC(x_indM);
+			cycle += 6;
+			break;
+		case 0xB1:
+			ADC(ind_yM);
+			cycle += 5 + extraCycle;
+			break;
+
+			// LDX
+		case 0xA2:
+			LDX(immM);
+			cycle += 2;
+			break;
+		case 0xA6:
+			LDX(zpgM);
+			cycle += 3;
+			break;
+		case 0xB6:
+			LDX(zpg_yM);
+			cycle += 4;
+			break;
+		case 0xAE:
+			LDX(absM);
+			cycle += 4;
+			break;
+		case 0xBE:
+			LDX(abs_yM);
+			cycle += 4 + extraCycle;
+			break;
+
+			// LDY
+		case 0xA0:
+			LDY(immM);
+			cycle += 2;
+			break;
+		case 0xA4:
+			LDY(zpgM);
+			cycle += 3;
+			break;
+		case 0xB4:
+			LDY(zpg_xM);
+			cycle += 4;
+			break;
+		case 0xAC:
+			LDY(absM);
+			cycle += 4;
+			break;
+		case 0xBC:
+			LDY(abs_xM);
+			cycle += 4 + extraCycle;
+			break;
+
+			// LSR
+		case 0x4A:
+			LSR();
+			cycle += 2;
+			break;
+		case 0x46:
+			LSR(zpgM);
+			cycle += 5;
+			break;
+		case 0x56:
+			LSR(zpg_xM);
+			cycle += 6;
+			break;
+		case 0x4E:
+			LSR(absM);
+			cycle += 6;
+			break;
+		case 0x5E:
+			LSR(abs_xM);
+			cycle += 7;
+			break;
+
+			// NOP
+		case 0xEA:
+			cycle += 2;
+			break;
+
+			// ORA
+		case 0x09:
+			ORA(immM);
+			cycle += 2;
+			break;
+		case 0x05:
+			ORA(zpgM);
+			cycle += 3;
+			break;
+		case 0x15:
+			ORA(zpg_xM);
+			cycle += 4;
+			break;
+		case 0x0D:
+			ORA(absM);
+			cycle += 4;
+			break;
+		case 0x1D:
+			ORA(abs_xM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0x19:
+			ORA(abs_yM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0x01:
+			ORA(x_indM);
+			cycle += 6;
+			break;
+		case 0x11:
+			ORA(ind_yM);
+			cycle += 5 + extraCycle;
+			break;
+
+			// Push Stack
+		case 0x48:
+			PHA();
+			cycle += 3;
+			break;
+		case 0x08:
+			PHP();
+			cycle += 3;
+			break;
+
+			// Pull Stack
+		case 0x68:
+			PLA();
+			cycle += 4;
+			break;
+		case 0x28:
+			PLP();
+			cycle += 4;
+			break;
+
+			// ROL
+		case 0x2A:
+			ROL();
+			cycle += 2;
+			break;
+		case 0x26:
+			ROL(zpgM);
+			cycle += 5;
+			break;
+		case 0x36:
+			ROL(zpg_xM);
+			cycle += 6;
+			break;
+		case 0x2E:
+			ROL(absM);
+			cycle += 6;
+			break;
+		case 0x3E:
+			ROL(abs_xM);
+			cycle += 7;
+			break;
+
+			// ROR
+		case 0x6A:
+			ROR();
+			cycle += 2;
+			break;
+		case 0x66:
+			ROR(zpgM);
+			cycle += 5;
+			break;
+		case 0x76:
+			ROR(zpg_xM);
+			cycle += 6;
+			break;
+		case 0x6E:
+			ROR(absM);
+			cycle += 6;
+			break;
+		case 0x7E:
+			ROR(abs_xM);
+			cycle += 7;
+			break;
+
+			// Return
+		case 0x40:
+			RTI();
+			cycle += 6;
+			break;
+		case 0x60:
+			RTS();
+			cycle += 6;
+			break;
+
+			// SBC
+		case 0xE9:
+			SBC(immM);
+			cycle += 2;
+			break;
+		case 0xE5:
+			SBC(zpgM);
+			cycle += 3;
+			break;
+		case 0xF5:
+			SBC(zpg_xM);
+			cycle += 4;
+			break;
+		case 0xED:
+			SBC(absM);
+			cycle += 4;
+			break;
+		case 0xFD:
+			SBC(abs_xM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0xF9:
+			SBC(abs_yM);
+			cycle += 4 + extraCycle;
+			break;
+		case 0xE1:
+			SBC(x_indM);
+			cycle += 6;
+			break;
+		case 0xF1:
+			SBC(ind_yM);
+			cycle += 5 + extraCycle;
+			break;
+
+			//Flags
+		case 0x38:
+			SEC();
+			cycle += 2;
+			break;
+		case 0xF8:
+			SED();
+			cycle += 2;
+			break;
+		case 0x78:
+			SEI();
+			cycle += 2;
+			break;
+
+			// STA
+		case 0x85:
+			STA(zpgM);
+			cycle += 3;
+			break;
+		case 0x95:
+			STA(zpg_xM);
+			cycle += 4;
+			break;
+		case 0x8D:
+			STA(absM);
+			cycle += 4;
+			break;
+		case 0x9D:
+			STA(abs_xM);
+			cycle += 5;
+			break;
+		case 0x99:
+			STA(abs_yM);
+			cycle += 5;
+			break;
+		case 0x81:
+			STA(x_indM);
+			cycle += 6;
+			break;
+		case 0x91:
+			STA(ind_yM);
+			cycle += 6;
+			break;
+
+			// STX
+		case 0x86:
+			STX(zpgM);
+			cycle += 3;
+			break;
+		case 0x96:
+			STX(zpg_xM);
+			cycle += 4;
+			break;
+		case 0x8E:
+			STX(absM);
+			cycle += 4;
+			break;
+
+			// STY
+		case 0x84:
+			STY(zpgM);
+			cycle += 3;
+			break;
+		case 0x94:
+			STY(zpg_xM);
+			cycle += 4;
+			break;
+		case 0x8C:
+			STY(absM);
+			cycle += 4;
+			break;
 		}
 	}
 };

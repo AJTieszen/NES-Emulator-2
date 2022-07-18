@@ -303,6 +303,8 @@ public:
 		PC = 0;
 	}
 
+	int illegal_opcodes = 0;
+
 // CPU Instructions
 	enum mode {
 		absM = 1, abs_xM, abs_yM, immM, indM, x_indM, ind_yM, zpgM, zpg_xM, zpg_yM
